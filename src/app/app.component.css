@@ -1,7 +1,6 @@
-export const environment = {
-  production: true
-};
-
+p {
+  font-family: Lato;
+}
 
 /*
 Copyright Google LLC. All Rights Reserved.
