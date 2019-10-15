@@ -14,7 +14,7 @@ export class ProductListComponent {
     window.alert('The product \''+name+'\' has been shared!');
   }
 
-  onNotifyMaxwell(name) {
+  onNotify(name) {
     window.alert('You will be notified when the product \''+name+'\' goes on sale');
   }
 }
