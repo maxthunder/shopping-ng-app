@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { CartService } from '../cart.service';
-import { HttpClient } from "@angular/common/http";
-import {Customer} from "../customer";
+import {Customer} from "../model/customer";
+import {ApiService} from "../api.service";
+import {Product} from "../model/product";
 
 
 @Component({
@@ -11,56 +12,68 @@ import {Customer} from "../customer";
   styleUrls: ['./cart.component.css']
 })
 export class CartComponent implements OnInit {
-  items;
+  products: Array<Product>;
   checkoutForm;
   customer: Customer;
+  address: string;
   customers: Array<Customer>;
 
   constructor(
     private cartService: CartService,
     private formBuilder: FormBuilder,
-    private http: HttpClient
+    private apiService: ApiService,
   ) { }
 
   ngOnInit() {
-    this.items = this.cartService.getItems();
+    // this.items = this.cartService.getProducts();
+    this.products = this.cartService.getItems();
 
     this.checkoutForm = this.formBuilder.group({
       name: '',
       address: ''
     });
 
-    let url = "http://localhost:8081/shopping/customers/name/Maxwell%20Stark";
-    console.log("Attempting http at :'" + url + "'");
+    this.refreshCustomers();
+  }
 
-    let observable = this.http.get<Customer>(url);
-
-    observable.subscribe((response) => {
-      this.customer = response;
-    });
-
-    // url = "http://localhost:8081/shopping/customers?name=Maxwell+Stark";
-    url = "http://localhost:8081/shopping/customers";
-    console.log("Attempting http at :'" + url + "'");
-
-    let observable2 = this.http.get<Array<Customer>>(url);
-
-    observable2.subscribe((response) => {
-      this.customers = response;
-      console.log("this.customers: " + this.customers);
-    });
-
-
-
+  refreshCustomers() {
+    this.apiService.getCustomers().subscribe(
+      (response) => {this.customers = response;},
+      () => {console.log("Error occurring during error apiService.getCustomers() call.")
+      });
   }
 
   onSubmit(customerData) {
     // Process checkout data here
-    console.warn('Your order has been submitted', customerData, this.items);
-    console.log("customerData.name: " + customerData.name);
+    console.warn('Your order has been submitted', customerData, this.products);
+
+    // GET customer, or POST and GET new one
+    this.apiService.getCustomer(customerData.name).subscribe(
+      (response) => {
+        this.customer = response;
+        if (this.customer) {
+        }
+      }, (error) => {
+        if (error.status == 404) {
+          this.apiService.createCustomer(customerData.name).subscribe(
+            (response) => {
+              this.customer = response;
+              this.refreshCustomers();
+            }
+          );
+        }
+      });
+
+    // Set address
+    this.address = customerData.address;
+
+    // create cart order
+    this.apiService.createCartOrder(this.customer.customerId, this.address, this.products);
 
 
-    this.items = this.cartService.clearCart();
-    this.checkoutForm.reset();
+
+
+    // this.items = this.cartService.clearCart();
+    // this.checkoutForm.reset();
   }
 }
