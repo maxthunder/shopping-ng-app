@@ -1,6 +1,6 @@
-<h3>CART: <div *ngIf="customer?.customerName.length > 0">
+<h3>CART: <span *ngIf="customer?.customerName.length > 0">
   {{customer?.customerName}} - {{customer?.customerId}}
-</div> </h3>
+</span> </h3>
 
 <p>
   <a routerLink="/shipping">Shipping Prices</a>

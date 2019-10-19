@@ -60,10 +60,23 @@ export class CartComponent implements OnInit, OnDestroy {
       (response) => {
         this.customer = response;
         if (this.customer) {
+          this.address = customerData.address;
+          this.apiService.createCartOrder(this.customer.customerId, this.address, this.items)
+            .pipe(takeUntil(this.unsubscribe$))
+            .subscribe(
+              (response) => {
+                alert("Cart order created. (will add rest call and callback ID later). "
+                  + JSON.stringify(response))
+              });
+
+          this.items = this.cartService.clearCart();
+          this.checkoutForm.reset();
         }
       }, (error) => {
         if (error.status == 404) {
-          this.apiService.createCustomer(customerData.name).subscribe(
+          this.apiService.createCustomer(customerData.name)
+            .pipe(takeUntil(this.unsubscribe$))
+            .subscribe(
             (response) => {
               this.customer = response;
               this.refreshCustomers();
@@ -71,15 +84,6 @@ export class CartComponent implements OnInit, OnDestroy {
           );
         }
       });
-
-    // Set address
-    this.address = customerData.address;
-
-    // create cart order
-    this.apiService.createCartOrder(this.customer.customerId, this.address, this.items);
-
-    // this.items = this.cartService.clearCart();
-    // this.checkoutForm.reset();
   }
 
   ngOnDestroy(): void {
