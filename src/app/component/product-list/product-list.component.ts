@@ -1,24 +1,32 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 
 import {ApiService} from "../../api.service";
 import {Product} from "../../model/product";
+import {Subject} from "rxjs";
+import {takeUntil} from "rxjs/operators";
 
 @Component({
   selector: 'app-product-list',
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css']
 })
-export class ProductListComponent implements OnInit{
+export class ProductListComponent implements OnInit, OnDestroy {
   products: Array<Product>;
+  private unsubscribe$ = new Subject<void>();
 
   constructor(
     private apiService: ApiService
   ) {}
 
   ngOnInit() {
-    this.apiService.getProducts().subscribe(
-      (response) => {this.products = response}
-    );
+    this.apiService.getProducts()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(
+        (response) => {
+          this.products = response
+        }, () => {
+          console.log("Error occurring during error apiService.getProducts() call.")
+        });
   }
 
 
@@ -29,7 +37,14 @@ export class ProductListComponent implements OnInit{
   onNotify(name) {
     window.alert('You will be notified when the product \''+name+'\' goes on sale');
   }
+
+  ngOnDestroy(): void {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete()
+  }
 }
+
+
 
 
 /*

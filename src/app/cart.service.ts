@@ -24,15 +24,12 @@ export class CartService {
     return this.items;
   }
 
-  getAllProducts() : Array<Product> {
-    this.apiService.getProducts().subscribe(
-      (response) => {
-        this.items = response;
-        console.log("in method");
-        return this.items;
-      }, () => {console.log("Error occurring during error apiService.getItems() call.")
-      });
-    return null;
+  getTotal() : number {
+    let total = 0;
+    this.items.forEach(function(value) {
+      total += value.price;
+    });
+    return total;
   }
 
   clearCart() {

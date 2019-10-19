@@ -6,12 +6,20 @@
   <a routerLink="/shipping">Shipping Prices</a>
 </p>
 
-<div class="cart-product" *ngFor="let product of products">
-  <span>{{product.name}}</span>
-  <span>{{product.price | currency}}</span>
+<div class="cart-product" *ngFor="let item of items">
+  <span>{{item.name}} - {{item.price | currency}}</span>
+</div>
+<div class="mt-3" *ngIf="productTotal">
+  <hr>
+  <b>Total - {{ productTotal | currency }}</b>
+</div>
+<div class="mt-3" *ngIf="!productTotal">
+  <i>Empty cart...</i>
 </div>
 
-<form [formGroup]="checkoutForm" (ngSubmit)="onSubmit(checkoutForm.value)">
+<hr>
+
+<form class="mt-3" [formGroup]="checkoutForm" (ngSubmit)="onSubmit(checkoutForm.value)">
   <div>
     <label for="name">
       Name
@@ -27,7 +35,8 @@
   <button class="button" type="submit">Purchase</button>
 </form>
 
-<div style="margin-top: 20px" *ngIf="customers">
+<div class="mt-3" *ngIf="customers">
+  <hr>
   <label for="customersDisplay">Customers:</label>
   <div id="customersDisplay" *ngFor="let cust of customers">
     {{cust.customerName}} - {{cust.customerId}}
