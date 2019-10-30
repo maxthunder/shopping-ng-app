@@ -1,4 +1,5 @@
-<h2>Products</h2>
+<h1 *ngIf="!shoppingSvcConnectionFailure">Products</h1>
+<hr>
 
 <h3 style="color: red;" *ngIf="shoppingSvcConnectionFailure">Error connecting to Shopping REST Service</h3>
 
@@ -17,14 +18,14 @@
     <!--Share-->
   <!--</button>-->
 
-  <app-product-alerts
-    [product] = "product"
-    (notify) = "onNotify(product.name)">
-  </app-product-alerts>
+  <!--<app-product-alerts-->
+    <!--[product] = "product"-->
+    <!--(notify) = "onNotify(product.name)">-->
+  <!--</app-product-alerts>-->
 
 </div>
 
-{{wait | async}} {{dairy | async}}
+<!--{{wait | async}} {{dairy | async}}-->
 
 <!-- 
 Copyright Google LLC. All Rights Reserved.

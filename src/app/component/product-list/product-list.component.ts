@@ -3,7 +3,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ApiService} from "../../api.service";
 import {Product} from "../../model/product";
 import {Subject} from "rxjs";
-import {takeUntil, takeWhile} from "rxjs/operators";
+import {takeUntil} from "rxjs/operators";
 import {HttpErrorResponse} from "@angular/common/http";
 
 @Component({
@@ -31,7 +31,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
       });
 
     this.apiService.getProducts()
-      .pipe(takeWhile(() => !this.products))
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         response => {
           this.products = this.apiService.products = response

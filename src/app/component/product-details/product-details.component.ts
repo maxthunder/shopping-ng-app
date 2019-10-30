@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 
 import { CartService } from '../../cart.service';
 import {ApiService} from "../../api.service";
-import {takeWhile} from "rxjs/operators";
+import {takeUntil} from "rxjs/operators";
 import {Subject} from "rxjs";
 
 @Component({
@@ -34,7 +34,7 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
       });
     } else {
       this.apiService.getProducts()
-        .pipe(takeWhile(() => !this.apiService.products))
+        .pipe(takeUntil(this.unsubscribe$))
         .subscribe(
           response => {
             // this.products = response;
