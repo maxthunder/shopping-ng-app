@@ -54,13 +54,13 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete()
   }
 
-  wait = new Promise<string>((res,err)=> {
+  wait = new Promise<string>((res)=> {
     setTimeout(function() {
       res('wait for it...');
     },1000)
   })
 
-  dairy = new Promise<string>((res,err)=> {
+  dairy = new Promise<string>((res)=> {
     setTimeout(function() {
       res('dairy');
     },3000)

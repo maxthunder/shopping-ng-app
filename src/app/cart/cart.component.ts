@@ -74,17 +74,16 @@ export class CartComponent implements OnInit, OnDestroy {
       response => {
         this.customer = response;
         if (this.customer) {
-          let address = customerData.address;
-          this.apiService.createCartOrder(this.customer.customerId, address, this.items)
-            .pipe(takeWhile(() => !this.cartOrder))
-            .subscribe(
-              response => {
-                this.cartOrder = response;
-                this.cartOrderId = this.cartOrder.cartOrderId;
-
-                console.warn("Cart order successfully created: " + JSON.stringify(response));
-              });
-          this.reset();
+          this.createCartOrder(customerData);
+          // let address = customerData.address;
+          // this.apiService.createCartOrder(this.customer.customerId, address, this.items)
+          //   .pipe(takeWhile(() => !this.cartOrder))
+          //   .subscribe(
+          //     response => {
+          //       this.refreshCartOrder(response);
+          //       console.warn("Cart order successfully created: " + JSON.stringify(response));
+          //     });
+          // this.reset();
         }
       }, error => {
         if (error.status == 404) {
@@ -94,15 +93,7 @@ export class CartComponent implements OnInit, OnDestroy {
               response => {
                 this.customer = response;
                 this.refreshCustomers();
-                let address = customerData.address;
-                this.apiService.createCartOrder(this.customer.customerId, address, this.items)
-                  .pipe(takeWhile(() => !this.cartOrder))
-                  .subscribe(
-                    response => {
-                      console.warn("Cart order successfully created: " + JSON.stringify(response));
-                      this.cartOrder = response;
-                      this.cartOrderId = this.cartOrder.cartOrderId;
-                    }, () => console.error("Error creating new customer."));
+                this.createCartOrder(customerData);
               }
             );
         }
@@ -117,5 +108,22 @@ export class CartComponent implements OnInit, OnDestroy {
   private reset() {
     this.items = this.cartService.clearCart();
     this.checkoutForm.reset();
+  }
+
+  private createCartOrder(customerData: any) {
+    let address = customerData.address;
+    this.apiService.createCartOrder(this.customer.customerId, address, this.items)
+      .pipe(takeWhile(() => !this.cartOrder))
+      .subscribe(
+        response => {
+          this.refreshCartOrder(response);
+          console.warn("Cart order successfully created: " + JSON.stringify(response));
+        });
+    this.reset();
+  }
+
+  private refreshCartOrder(cartOrder: CartOrder) {
+    this.cartOrder = cartOrder;
+    this.cartOrderId = this.cartOrder.cartOrderId;
   }
 }
