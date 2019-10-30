@@ -2,9 +2,8 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { CartService } from '../../cart.service';
-import {Product} from "../../model/product";
 import {ApiService} from "../../api.service";
-import {takeUntil} from "rxjs/operators";
+import {takeWhile} from "rxjs/operators";
 import {Subject} from "rxjs";
 
 @Component({
@@ -13,7 +12,7 @@ import {Subject} from "rxjs";
   styleUrls: ['./product-details.component.css']
 })
 export class ProductDetailsComponent implements OnInit, OnDestroy {
-  products: Array<Product>;
+  // products: Array<Product>;
   product;
   private unsubscribe$ = new Subject<void>();
 
@@ -29,25 +28,24 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.log("before");
-    this.apiService.getProducts()
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(
-        (response) => {
-          console.log("in method");
-          this.products = response;
-          this.route.paramMap.subscribe(params => {
-            console.log("params.get('index'): " + params.get('index'));
-            this.product = this.products[+params.get('index')];
-            console.log("product set");
-          })
-        }, () => {
-          console.log("Error occurring during error apiService.getProducts() call.")
-        });
-    console.log("after");
-
-
-
+    if (this.apiService.products) {
+      this.route.paramMap.subscribe(params => {
+        this.product = this.apiService.products[+params.get('index')];
+      });
+    } else {
+      this.apiService.getProducts()
+        .pipe(takeWhile(() => !this.apiService.products))
+        .subscribe(
+          response => {
+            // this.products = response;
+            this.apiService.products = response;
+            this.route.paramMap.subscribe(params => {
+              this.product = this.apiService.products[+params.get('index')];
+            })
+          }, () => {
+            console.log("Error occurring during error apiService.getProducts() call.")
+          });
+    }
   }
 
   ngOnDestroy() {

@@ -11,6 +11,8 @@ import { ProductAlertsComponent } from './component/product-alerts/product-alert
 import { ProductDetailsComponent } from './component/product-details/product-details.component';
 import { CartComponent } from './cart/cart.component';
 import { ShippingComponent } from './component/shipping/shipping.component';
+import { PurchaseResultsComponent } from './component/purchase-results/purchase-results.component';
+import { PurchaseDetailsComponent } from './component/purchase-details/purchase-details.component';
 
 @NgModule({
   imports: [
@@ -20,6 +22,7 @@ import { ShippingComponent } from './component/shipping/shipping.component';
     RouterModule.forRoot([
       { path: '', component: ProductListComponent },
       { path: 'items/:index', component: ProductDetailsComponent },
+      { path: 'results', component: PurchaseResultsComponent },
       { path: 'cart', component: CartComponent },
       { path: 'shipping', component: ShippingComponent },
     ])
@@ -31,7 +34,9 @@ import { ShippingComponent } from './component/shipping/shipping.component';
     ProductAlertsComponent,
     ProductDetailsComponent,
     CartComponent,
-    ShippingComponent
+    ShippingComponent,
+    PurchaseResultsComponent,
+    PurchaseDetailsComponent,
   ],
   bootstrap: [ AppComponent ]
 })

@@ -1,7 +1,8 @@
-import {Product} from "./product";
+import {PurchasedItem} from "./purchased-item";
 
 export interface CartOrder {
-  customerId: number;
+  cartOrderId: number;
   address: string;
-  items: Array<Product>;
+  customerId: number;
+  purchasedItems: PurchasedItem[];
 }

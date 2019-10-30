@@ -19,21 +19,21 @@
 
 <hr>
 
-<form class="mt-3" [formGroup]="checkoutForm" (ngSubmit)="onSubmit(checkoutForm.value)">
+<form id="checkoutForm" class="mt-3" [formGroup]="checkoutForm" (ngSubmit)="onSubmit(checkoutForm.value)">
   <div>
-    <label for="name">
-      Name
-    </label>
-    <input id="name" type="text" formControlName="name" required="required">
+    <label for="name">Customer Name*</label>
+    <input id="name" class="form-control" type="text" formControlName="name">
+
   </div>
   <div>
-    <label for="address">
-      Address
-    </label>
-    <input id="address" type="text" formControlName="address" required="required">
+    <label for="address">Address*</label>
+    <input id="address" class="form-control" type="text" formControlName="address" required="required">
   </div>
-  <button class="button" type="submit">Purchase</button>
+  <button class="button" type="submit" [disabled]="checkoutForm.invalid || items.length==0">Purchase</button>
 </form>
+
+<app-purchase-results [data]="cartOrderId"></app-purchase-results>
+
 
 <div class="mt-3" *ngIf="customers">
   <hr>

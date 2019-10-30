@@ -1,5 +1,7 @@
 <h2>Products</h2>
 
+<h3 style="color: red;" *ngIf="shoppingSvcConnectionFailure">Error connecting to Shopping REST Service</h3>
+
 <div *ngFor="let product of products; index as index" >
   <h3>
     <a [title]="product.name + ' details'" [routerLink]="['/items', index]">

@@ -1,41 +1,67 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpParams} from "@angular/common/http";
+import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {Customer} from "./model/customer";
 import {CartOrder} from "./model/cart.order";
 import {Product} from "./model/product";
+import {environment} from "../environments/environment";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
+  private shoppingServicePath:string = environment.hostname + ":" + environment.port;
+  products: Product[];
 
   constructor(private http: HttpClient) {}
 
+  getStatus(): Observable<string> {
+    const requestOptions: Object = {
+      headers: new HttpHeaders().set('Content-Type', 'text/plain; charset=utf-8'),
+      responseType: 'text'
+    };
+    return this.http.get<string>("http://"+this.shoppingServicePath+"/shopping/status", requestOptions);
+  }
+
   getProducts(): Observable<Array<Product>> {
-    return this.http.get<Array<Product>>("http://localhost:8081/shopping/products");
+    return this.http.get<Array<Product>>("http://"+this.shoppingServicePath+"/shopping/products");
   }
 
   getCustomer(name: string): Observable<Customer> {
-    const url = "http://localhost:8081/shopping/customers/name/"+encodeURIComponent(name);
+    const url = "http://"+this.shoppingServicePath+"/shopping/customers/name/"+encodeURIComponent(name);
     return this.http.get<Customer>(url);
   }
 
   getCustomers() : Observable<Array<Customer>> {
-    return this.http.get<Array<Customer>>("http://localhost:8081/shopping/customers");
+    return this.http.get<Array<Customer>>("http://"+this.shoppingServicePath+"/shopping/customers");
   }
 
   createCustomer(name: string) : Observable<Customer> {
-    const url = "http://localhost:8081/shopping/customers/name/" + encodeURIComponent(name);
+    const url = "http://"+this.shoppingServicePath+"/shopping/customers/name/" + encodeURIComponent(name);
     return this.http.post<Customer>(url, null);
   }
 
   createCartOrder(customerId: number, address: string, items: Array<Product>) : Observable<CartOrder> {
-    const url = "http://localhost:8081/shopping/cartOrders";
-    let params: HttpParams = new HttpParams();
-    params.set("customerId", customerId.toString());
-    params.set("address", address);
-    params.set("items", items.join(','));
-    return this.http.post<CartOrder>(url, null);
+    const url = "http://"+this.shoppingServicePath+"/shopping/cartOrders";
+    // let productIds: string = "";
+    // for (let i = 0; i < items.length; i++) {
+    //   productIds += items[i].productRefId.toString();
+    // }
+    let productIds: Array<number> = new Array<number>();
+    for (let i = 0; i < items.length; i++) {
+      productIds.push(items[i].productRefId);
+    }
+    // let params: HttpParams = new HttpParams()
+    //   .set("address", address)
+    //   .set("customerId", customerId.toString())
+    //   .set("productIds", productIds);
+
+    let data = {
+      address: address,
+      customerId: customerId.toString(),
+      productIds: productIds,
+    };
+
+    return this.http.post<CartOrder>(url, data);
   }
 }

@@ -3,7 +3,8 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ApiService} from "../../api.service";
 import {Product} from "../../model/product";
 import {Subject} from "rxjs";
-import {takeUntil} from "rxjs/operators";
+import {takeUntil, takeWhile} from "rxjs/operators";
+import {HttpErrorResponse} from "@angular/common/http";
 
 @Component({
   selector: 'app-product-list',
@@ -12,6 +13,7 @@ import {takeUntil} from "rxjs/operators";
 })
 export class ProductListComponent implements OnInit, OnDestroy {
   products: Array<Product>;
+  shoppingSvcConnectionFailure = false;
   private unsubscribe$ = new Subject<void>();
 
   constructor(
@@ -19,11 +21,20 @@ export class ProductListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.apiService.getProducts()
+    this.apiService.getStatus()
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
-        (response) => {
-          this.products = response
+        ()=>{},
+        (error: HttpErrorResponse) => {
+        console.error("Unable to connect to shopping service.");
+        this.shoppingSvcConnectionFailure = true;
+      });
+
+    this.apiService.getProducts()
+      .pipe(takeWhile(() => !this.products))
+      .subscribe(
+        response => {
+          this.products = this.apiService.products = response
         }, () => {
           console.log("Error occurring during error apiService.getProducts() call.")
         });
@@ -42,6 +53,18 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.unsubscribe$.next();
     this.unsubscribe$.complete()
   }
+
+  wait = new Promise<string>((res,err)=> {
+    setTimeout(function() {
+      res('wait for it...');
+    },1000)
+  })
+
+  dairy = new Promise<string>((res,err)=> {
+    setTimeout(function() {
+      res('dairy');
+    },3000)
+  })
 }
 
 

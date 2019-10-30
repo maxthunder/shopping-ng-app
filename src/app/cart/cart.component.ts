@@ -1,11 +1,12 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { CartService } from '../cart.service';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {CartService} from '../cart.service';
 import {Customer} from "../model/customer";
 import {ApiService} from "../api.service";
 import {Product} from "../model/product";
-import {takeUntil} from "rxjs/operators";
-import {from, Subject} from "rxjs";
+import {takeWhile} from "rxjs/operators";
+import {Subject} from "rxjs";
+import {CartOrder} from "../model/cart.order";
 
 
 @Component({
@@ -15,11 +16,13 @@ import {from, Subject} from "rxjs";
 })
 export class CartComponent implements OnInit, OnDestroy {
   items: Array<Product>;
-  checkoutForm;
+  checkoutForm: FormGroup;
   customer: Customer;
-  address: string;
   customers: Array<Customer>;
   productTotal: number;
+  submitted: boolean = false;
+  cartOrder: CartOrder;
+  cartOrderId: number;
 
   private unsubscribe$ = new Subject<void>();
 
@@ -27,12 +30,12 @@ export class CartComponent implements OnInit, OnDestroy {
     private cartService: CartService,
     private formBuilder: FormBuilder,
     private apiService: ApiService,
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.checkoutForm = this.formBuilder.group({
-      name: '',
-      address: ''
+      name: ['', Validators.required],
+      address: ['', Validators.required]
     });
 
     this.refreshCustomers();
@@ -42,46 +45,66 @@ export class CartComponent implements OnInit, OnDestroy {
 
   refreshCustomers() {
     this.apiService.getCustomers()
-      .pipe(takeUntil(this.unsubscribe$))
+      .pipe(takeWhile(() => !this.customers))
       .subscribe(
-        (response) => {
+        response => {
           this.customers = response;
         }, () => {
           console.log("Error occurring during error apiService.getCustomers() call.")
         });
   }
 
+  get form() {
+    return this.checkoutForm.controls;
+  }
+
   onSubmit(customerData) {
+    this.submitted = true;
+
+    if (this.checkoutForm.invalid)
+      return;
+
     // Process checkout data here
     console.warn('Your order has been submitted', customerData, this.items);
 
     // GET customer, or POST and GET new one
-    this.apiService.getCustomer(customerData.name).subscribe(
-      (response) => {
+    this.apiService.getCustomer(customerData.name)
+      .pipe(takeWhile(() => !this.customer))
+      .subscribe(
+      response => {
         this.customer = response;
         if (this.customer) {
-          this.address = customerData.address;
-          this.apiService.createCartOrder(this.customer.customerId, this.address, this.items)
-            .pipe(takeUntil(this.unsubscribe$))
+          let address = customerData.address;
+          this.apiService.createCartOrder(this.customer.customerId, address, this.items)
+            .pipe(takeWhile(() => !this.cartOrder))
             .subscribe(
-              (response) => {
-                alert("Cart order created. (will add rest call and callback ID later). "
-                  + JSON.stringify(response))
-              });
+              response => {
+                this.cartOrder = response;
+                this.cartOrderId = this.cartOrder.cartOrderId;
 
-          this.items = this.cartService.clearCart();
-          this.checkoutForm.reset();
+                console.warn("Cart order successfully created: " + JSON.stringify(response));
+              });
+          this.reset();
         }
-      }, (error) => {
+      }, error => {
         if (error.status == 404) {
           this.apiService.createCustomer(customerData.name)
-            .pipe(takeUntil(this.unsubscribe$))
+            .pipe(takeWhile(() => !this.customer))
             .subscribe(
-            (response) => {
-              this.customer = response;
-              this.refreshCustomers();
-            }
-          );
+              response => {
+                this.customer = response;
+                this.refreshCustomers();
+                let address = customerData.address;
+                this.apiService.createCartOrder(this.customer.customerId, address, this.items)
+                  .pipe(takeWhile(() => !this.cartOrder))
+                  .subscribe(
+                    response => {
+                      console.warn("Cart order successfully created: " + JSON.stringify(response));
+                      this.cartOrder = response;
+                      this.cartOrderId = this.cartOrder.cartOrderId;
+                    }, () => console.error("Error creating new customer."));
+              }
+            );
         }
       });
   }
@@ -89,5 +112,10 @@ export class CartComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.unsubscribe$.next();
     this.unsubscribe$.complete()
+  }
+
+  private reset() {
+    this.items = this.cartService.clearCart();
+    this.checkoutForm.reset();
   }
 }
