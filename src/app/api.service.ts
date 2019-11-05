@@ -5,6 +5,7 @@ import {Customer} from "./model/customer";
 import {CartOrder} from "./model/cart.order";
 import {Product} from "./model/product";
 import {environment} from "../environments/environment";
+import {publishReplay, refCount} from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +25,10 @@ export class ApiService {
   }
 
   getProducts(): Observable<Array<Product>> {
-    return this.http.get<Array<Product>>("http://"+this.shoppingServicePath+"/shopping/products");
+    return this.http.get<Array<Product>>("http://"+this.shoppingServicePath+"/shopping/products")
+      .pipe(
+        publishReplay(3), // this tells Rx to cache the latest emitted
+        refCount());                // and this tells Rx to keep the Observable alive as long as there are any Subscribers);
   }
 
   getCustomer(name: string): Observable<Customer> {
