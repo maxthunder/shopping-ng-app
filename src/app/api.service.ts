@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from "@angular/common/http";
-import {Observable} from "rxjs";
+import {EMPTY, Observable} from "rxjs";
 import {Customer} from "./model/customer";
 import {CartOrder} from "./model/cart.order";
 import {Product} from "./model/product";
 import {environment} from "../environments/environment";
-import {publishReplay, refCount} from "rxjs/operators";
+import {catchError, delay, publishReplay, refCount, retry} from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
@@ -36,8 +36,8 @@ export class ApiService {
     return this.http.get<Customer>(url);
   }
 
-  getCustomers() : Observable<Array<Customer>> {
-    return this.http.get<Array<Customer>>("http://"+this.shoppingServicePath+"/shopping/customers");
+  getCustomers() : Observable<Customer[]> {
+    return this.http.get<Customer[]>("http://"+this.shoppingServicePath+"/shopping/customers");
   }
 
   createCustomer(name: string) : Observable<Customer> {
@@ -45,6 +45,12 @@ export class ApiService {
     return this.http.post<Customer>(url, null);
   }
 
+  getCartOrdersByCustomerId(customerId: number) : Observable<CartOrder[]> {
+    const params = new HttpParams()
+      .set('customerId', customerId.toString());
+    return this.http.get<CartOrder[]>("http://"+this.shoppingServicePath+"/shopping/cartOrders", {params});
+  }
+  
   createCartOrder(customerId: number, address: string, items: Array<Product>) : Observable<CartOrder> {
     const url = "http://"+this.shoppingServicePath+"/shopping/cartOrders";
     // let productIds: string = "";

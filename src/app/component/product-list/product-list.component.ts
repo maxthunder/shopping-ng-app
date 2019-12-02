@@ -2,8 +2,8 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 
 import {ApiService} from "../../api.service";
 import {Product} from "../../model/product";
-import {Subject} from "rxjs";
-import {publishReplay, refCount, takeUntil} from "rxjs/operators";
+import {EMPTY, Observable, Subject} from "rxjs";
+import {catchError, delay, publishReplay, refCount, retry, takeUntil} from "rxjs/operators";
 import {HttpErrorResponse} from "@angular/common/http";
 
 @Component({
@@ -31,16 +31,31 @@ export class ProductListComponent implements OnInit, OnDestroy {
       });
 
     this.apiService.getProducts()
-      .pipe(
-        takeUntil(this.unsubscribe$))
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         response => {
           this.products = this.apiService.products = response
-        }, () => {
-          console.log("Error occurring during error apiService.getProducts() call.")
+        }, ()=> {
+          console.log("Error occurring during error apiService.getProducts() call.");
         });
   }
 
+  private name: Observable<string>;
+
+  observableTest() {
+    this.name = new Observable(observer => {
+      observer.next("Hello from observer.next()");
+      observer.complete();
+    });
+
+    let subscribe = this.name.subscribe(
+      data => {alert(data);},
+      // error => {errorHandler(error)},
+      // ()=> {final()}
+    );
+    subscribe.unsubscribe();
+
+  }
 
   share(name) {
     window.alert('The product \''+name+'\' has been shared!');

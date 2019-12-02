@@ -1,0 +1,9 @@
+.space-top-20 {
+  margin-top: 20px;
+}
+
+.table-border {
+  border-width: 2px;
+  border-style: solid;
+  padding: 1px;
+}

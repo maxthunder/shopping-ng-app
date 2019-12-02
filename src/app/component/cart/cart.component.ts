@@ -1,12 +1,12 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {CartService} from '../cart.service';
-import {Customer} from "../model/customer";
-import {ApiService} from "../api.service";
-import {Product} from "../model/product";
+import {CartService} from '../../cart.service';
+import {Customer} from "../../model/customer";
+import {ApiService} from "../../api.service";
+import {Product} from "../../model/product";
 import {takeUntil} from "rxjs/operators";
 import {Subject} from "rxjs";
-import {CartOrder} from "../model/cart.order";
+import {CartOrder} from "../../model/cart.order";
 
 
 @Component({
@@ -18,7 +18,7 @@ export class CartComponent implements OnInit, OnDestroy {
   items: Array<Product>;
   checkoutForm: FormGroup;
   customer: Customer;
-  customers: Array<Customer>;
+  customers: Customer[];
   productTotal: number;
   submitted: boolean = false;
   cartOrder: CartOrder;

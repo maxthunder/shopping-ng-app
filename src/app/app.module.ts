@@ -9,10 +9,13 @@ import { TopBarComponent } from './component/top-bar/top-bar.component';
 import { ProductListComponent } from './component/product-list/product-list.component';
 import { ProductAlertsComponent } from './component/product-alerts/product-alerts.component';
 import { ProductDetailsComponent } from './component/product-details/product-details.component';
-import { CartComponent } from './cart/cart.component';
+import { CartComponent } from './component/cart/cart.component';
 import { ShippingComponent } from './component/shipping/shipping.component';
 import { PurchaseResultsComponent } from './component/purchase-results/purchase-results.component';
 import { PurchaseDetailsComponent } from './component/purchase-details/purchase-details.component';
+import { CatImagesComponent } from './component/cat-images/cat-images.component';
+import { ZoomDirective } from './zoom.directive';
+import { PreviousOrdersComponent } from './component/previous-orders/previous-orders.component';
 
 @NgModule({
   imports: [
@@ -25,6 +28,8 @@ import { PurchaseDetailsComponent } from './component/purchase-details/purchase-
       { path: 'results', component: PurchaseResultsComponent },
       { path: 'cart', component: CartComponent },
       { path: 'shipping', component: ShippingComponent },
+      { path: 'catImages', component: CatImagesComponent },
+      { path: 'previousOrders', component: PreviousOrdersComponent },
     ])
   ],
   declarations: [
@@ -37,6 +42,9 @@ import { PurchaseDetailsComponent } from './component/purchase-details/purchase-
     ShippingComponent,
     PurchaseResultsComponent,
     PurchaseDetailsComponent,
+    CatImagesComponent,
+    ZoomDirective,
+    PreviousOrdersComponent,
   ],
   bootstrap: [ AppComponent ]
 })
