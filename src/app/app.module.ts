@@ -16,12 +16,14 @@ import { PurchaseDetailsComponent } from './component/purchase-details/purchase-
 import { CatImagesComponent } from './component/cat-images/cat-images.component';
 import { ZoomDirective } from './zoom.directive';
 import { PreviousOrdersComponent } from './component/previous-orders/previous-orders.component';
+import {NgxSpinnerModule} from "ngx-spinner";
 
 @NgModule({
   imports: [
     BrowserModule,
     HttpClientModule,
     ReactiveFormsModule,
+    NgxSpinnerModule,
     RouterModule.forRoot([
       { path: '', component: ProductListComponent },
       { path: 'items/:index', component: ProductDetailsComponent },

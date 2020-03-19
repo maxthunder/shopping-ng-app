@@ -1,4 +1,24 @@
-<p>
-  Customer Id : {{customerId}}
-  <!--Purchased Items: {{}}-->
-</p>
+<div>
+  <div *ngIf="cartOrders">
+    <p>Customer ID : {{customerId}}</p>
+    <table class="table">
+      <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Address</th>
+        <th scope="col">Purchased Item</th>
+      </tr>
+      </thead>
+      <tbody>
+      <div *ngFor="let order of cartOrders">
+        <tr>
+          <td>{{order.cartOrderId}}</td>
+          <td>{{order.address}}</td>
+          <td>{{order.purchasedItems}}</td>
+        </tr>
+      </div>
+      </tbody>
+    </table>
+  </div>
+</div>
+

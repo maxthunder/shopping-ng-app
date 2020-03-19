@@ -1,7 +1,17 @@
 <h1 *ngIf="!shoppingSvcConnectionFailure">Products</h1>
 <hr>
 
-<h3 style="color: red;" *ngIf="shoppingSvcConnectionFailure">Error connecting to Shopping REST Service</h3>
+<div *ngIf="!products">
+  <h3 style="color: red;">Error connecting to Shopping REST Service</h3>
+  <button class="button" (click)="getProductsFromShoppingSvc()">Retry</button>
+  <div *ngIf="isLoading">
+    <ngx-spinner bdColor="rgba(51, 51, 51, 0.8)" size="default" type="ball-spin-clockwise">
+      <p style="color: white">Please Wait. </p>
+    </ngx-spinner>
+  </div>
+
+</div>
+
 
 <div *ngFor="let product of products; index as index" >
   <h3>
@@ -9,27 +19,16 @@
       {{product.name}}
     </a>
   </h3>
-
-  <!--<p *ngIf="product.description">-->
-    <!--Description: {{product.description}}-->
-  <!--</p>-->
-
-  <!--<button (click)="share(product.name)">-->
-    <!--Share-->
-  <!--</button>-->
-
-  <!--<app-product-alerts-->
-    <!--[product] = "product"-->
-    <!--(notify) = "onNotify(product.name)">-->
-  <!--</app-product-alerts>-->
 </div>
 
-<button (click)="observableTest()">Hit Me Baby</button>
 
 
-<!--{{wait | async}} {{dairy | async}}-->
 
-<!-- 
+
+
+
+
+<!--
 Copyright Google LLC. All Rights Reserved.
 Use of this source code is governed by an MIT-style license that
 can be found in the LICENSE file at http://angular.io/license

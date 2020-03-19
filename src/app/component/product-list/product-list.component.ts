@@ -5,6 +5,7 @@ import {Product} from "../../model/product";
 import {EMPTY, Observable, Subject} from "rxjs";
 import {catchError, delay, publishReplay, refCount, retry, takeUntil} from "rxjs/operators";
 import {HttpErrorResponse} from "@angular/common/http";
+import {NgxSpinnerService} from "ngx-spinner";
 
 @Component({
   selector: 'app-product-list',
@@ -15,9 +16,12 @@ export class ProductListComponent implements OnInit, OnDestroy {
   products: Array<Product>;
   shoppingSvcConnectionFailure = false;
   private unsubscribe$ = new Subject<void>();
+  isLoading: boolean;
+  private interval: any;
 
   constructor(
-    private apiService: ApiService
+    private apiService: ApiService,
+    private spinnerService: NgxSpinnerService
   ) {}
 
   ngOnInit() {
@@ -30,14 +34,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
         this.shoppingSvcConnectionFailure = true;
       });
 
-    this.apiService.getProducts()
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(
-        response => {
-          this.products = this.apiService.products = response
-        }, ()=> {
-          console.log("Error occurring during error apiService.getProducts() call.");
-        });
+    this.getProductsFromShoppingSvc();
   }
 
   private name: Observable<string>;
@@ -65,9 +62,25 @@ export class ProductListComponent implements OnInit, OnDestroy {
     window.alert('You will be notified when the product \''+name+'\' goes on sale');
   }
 
+  getProductsFromShoppingSvc() {
+    this.isLoading = true;
+    this.spinnerService.show();
+    this.apiService.getProducts()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(
+        response => {
+          this.isLoading = false;
+          this.products = this.apiService.products = response;
+        }, ()=> {
+          this.isLoading = false;
+          console.log("Error occurring during error apiService.getProducts() call.");
+        });
+  }
+
   ngOnDestroy(): void {
     this.unsubscribe$.next();
-    this.unsubscribe$.complete()
+    this.unsubscribe$.complete();
+    clearInterval(this.interval);
   }
 
   wait = new Promise<string>((res)=> {

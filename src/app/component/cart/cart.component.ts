@@ -66,7 +66,7 @@ export class CartComponent implements OnInit, OnDestroy {
 
     // console.warn('Your order has been submitted', customerData, this.items);
 
-    // GET customer, or POST and GET new one
+    // GET customer, or POST then GET new one
     this.apiService.getCustomer(customerData.name)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
