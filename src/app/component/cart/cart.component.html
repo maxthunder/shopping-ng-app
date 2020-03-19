@@ -38,19 +38,13 @@
       <app-purchase-results [data]="cartOrderId"></app-purchase-results>
     </td>
     <div style="border-left:1px solid #000;height:500px;margin:10px;"></div>
-    <td>
-      <app-previous-orders [data]="customer?.customerId"></app-previous-orders>
-    </td>
+<!--    <td>-->
+<!--      <app-previous-orders [customerId]="customer?.customerId"></app-previous-orders>-->
+<!--    </td>-->
   </tr>
   <tr>
     <td>
-      <div class="mt-3" *ngIf="customers">
-        <hr>
-        <label for="customersDisplay">Customers:</label>
-        <div id="customersDisplay" *ngFor="let cust of customers">
-          {{cust.customerName}} - {{cust.customerId}}
-        </div>
-      </div>
+      <app-customer-list [customers]="customers"></app-customer-list>
     </td>
     <td></td>
   </tr>

@@ -17,6 +17,8 @@ import { CatImagesComponent } from './component/cat-images/cat-images.component'
 import { ZoomDirective } from './zoom.directive';
 import { PreviousOrdersComponent } from './component/previous-orders/previous-orders.component';
 import {NgxSpinnerModule} from "ngx-spinner";
+import { OrderHistoryComponent } from './component/order-history/order-history.component';
+import { CustomerListComponent } from './component/customer-list/customer-list.component';
 
 @NgModule({
   imports: [
@@ -32,6 +34,7 @@ import {NgxSpinnerModule} from "ngx-spinner";
       { path: 'shipping', component: ShippingComponent },
       { path: 'catImages', component: CatImagesComponent },
       { path: 'previousOrders', component: PreviousOrdersComponent },
+      { path: 'orderHistory', component: OrderHistoryComponent },
     ])
   ],
   declarations: [
@@ -47,6 +50,11 @@ import {NgxSpinnerModule} from "ngx-spinner";
     CatImagesComponent,
     ZoomDirective,
     PreviousOrdersComponent,
+    OrderHistoryComponent,
+    CustomerListComponent,
+  ],
+  exports: [
+    OrderHistoryComponent
   ],
   bootstrap: [ AppComponent ]
 })

@@ -1,0 +1,7 @@
+<div class="mt-3" *ngIf="customers">
+  <hr>
+  <label for="customersDisplay">Customers:</label>
+  <div id="customersDisplay" *ngFor="let cust of customers">
+    {{cust.customerName}} - {{cust.customerId}}
+  </div>
+</div>

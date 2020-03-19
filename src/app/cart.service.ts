@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {ApiService} from "./api.service";
 import {Product} from "./model/product";
 
 
@@ -11,8 +10,7 @@ export class CartService {
   items = [];
 
   constructor(
-    private http: HttpClient,
-    private apiService: ApiService
+    private http: HttpClient
   ) {}
 
   addToCart(product) {

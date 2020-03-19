@@ -1,11 +1,11 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 
-import {ApiService} from "../../api.service";
 import {Product} from "../../model/product";
 import {EMPTY, Observable, Subject} from "rxjs";
 import {catchError, delay, publishReplay, refCount, retry, takeUntil} from "rxjs/operators";
 import {HttpErrorResponse} from "@angular/common/http";
 import {NgxSpinnerService} from "ngx-spinner";
+import {ShoppingService} from "../../shopping.service";
 
 @Component({
   selector: 'app-product-list',
@@ -20,12 +20,12 @@ export class ProductListComponent implements OnInit, OnDestroy {
   private interval: any;
 
   constructor(
-    private apiService: ApiService,
+    private shoppingService: ShoppingService,
     private spinnerService: NgxSpinnerService
   ) {}
 
   ngOnInit() {
-    this.apiService.getStatus()
+    this.shoppingService.getStatus()
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         ()=>{},
@@ -65,15 +65,15 @@ export class ProductListComponent implements OnInit, OnDestroy {
   getProductsFromShoppingSvc() {
     this.isLoading = true;
     this.spinnerService.show();
-    this.apiService.getProducts()
+    this.shoppingService.getProducts()
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         response => {
           this.isLoading = false;
-          this.products = this.apiService.products = response;
+          this.products = this.shoppingService.products = response;
         }, ()=> {
           this.isLoading = false;
-          console.log("Error occurring during error apiService.getProducts() call.");
+          console.log("Error occurring during error shoppingService.getProducts() call.");
         });
   }
 

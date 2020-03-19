@@ -1,0 +1,21 @@
+
+<form id="orderHistoryForm" class="container" [formGroup]="orderHistoryForm" (ngSubmit)="onSubmit(orderHistoryForm.value)">
+  <div class="m-3">
+    <label for="customerNameInput">Customer Name:</label>
+    <input id="customerNameInput" class="form-control" type="text" formControlName="customerName">
+    <button class="btn btn-primary" type="submit" [disabled]="orderHistoryForm.invalid">Lookup Orders</button>
+
+    <app-customer-list></app-customer-list>
+  </div>
+  <div style="border-left:1px solid #000;height:500px;margin:10px;"></div>
+  <div *ngIf="customer" class="m-3">
+    <div>
+      <app-previous-orders></app-previous-orders>
+    </div>
+  </div>
+  <div *ngIf="!customer" class="m-3">
+    <div>
+      <h1>Customer <i>{{customerName}}</i> doesn't exist.</h1>
+    </div>
+  </div>
+</form>
